@@ -1,17 +1,27 @@
-/*
- * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
- * See LICENSE in the project root for license information.
- */
-
-/* global console, document, Excel, Office */
-
 import RequestContext = Excel.RequestContext;
 
+/* global console, document, Excel, Office */
 Office.onReady((info) => {
   if (info.host === Office.HostType.Excel) {
     document.getElementById("run").onclick = run;
+    document.querySelector("textarea").onchange = handleActiveCellChange;
   }
 });
+
+/**
+ * Deletes the text box content if it is different than the starting value of ""
+ * and the active cell changes
+ */
+async function handleActiveCellChange(): Promise<void> {
+  try {
+    await Excel.run(async (context) => {
+      context.workbook.onSelectionChanged.add(deleteTextBoxContent);
+      await context.sync();
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 /**
  * Returns the currently active cell
@@ -35,7 +45,7 @@ async function syncTextboxAndActiveCell(context: RequestContext): Promise<void> 
 /**
  * Clears the text box when the active cell changes
  */
-function handleSelectionChange(): Promise<void> {
+function deleteTextBoxContent(): Promise<void> {
   document.querySelector("textarea").value = "";
   return null;
 }
@@ -44,7 +54,6 @@ export async function run(): Promise<void> {
   try {
     await Excel.run(async (context) => {
       await syncTextboxAndActiveCell(context);
-      context.workbook.onSelectionChanged.add(handleSelectionChange);
     });
   } catch (error) {
     console.error(error);
