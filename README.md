@@ -1,11 +1,10 @@
 ## Dependencies setup
+Please make sure you have the Excel desktop version installed Before proceeding further!
 
-`npm i`
+Install dependencies by running `npm i`
 
 
 ## Dev setup
-Start dev server by running
-`npm run dev-server`
+Start dev server by running `npm run dev-server`
 
-Run locally with
-`npm start`
+Running locally with `npm start`
