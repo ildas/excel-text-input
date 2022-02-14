@@ -10,7 +10,7 @@ Please make sure you have the Excel desktop version installed Before proceeding 
 Install dependencies by running `npm i`
 
 
-## Dev setup
+## Running locally
 Start dev server by running `npm run dev-server`
 
 Running locally with `npm start`
