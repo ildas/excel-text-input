@@ -3,10 +3,6 @@ import RequestContext = Excel.RequestContext;
 /* global console, document, Excel */
 
 export class ExcelHelper {
-  log() {
-    console.log("logging");
-  }
-
   /**
    * Returns the currently active cell
    * @param context
@@ -22,14 +18,12 @@ export class ExcelHelper {
   async handleActiveCellChange(): Promise<void> {
     try {
       await Excel.run(async (context) => {
-        console.log("detected text box content change");
         context.workbook.onSelectionChanged.add(function () {
           document.querySelector("textarea").value = "";
           // onSelectionChanged doesn't allow handlers that return void, so
           // return null is needed
           return null;
         });
-        console.log("after detected text box content change");
         await context.sync();
       });
     } catch (error) {
