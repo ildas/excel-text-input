@@ -12,6 +12,23 @@ export class ExcelHelper {
   }
 
   /**
+   * Sets the value of the active cell to the value of the task pane text box
+   */
+  async run(): Promise<void> {
+    try {
+      await Excel.run(async (context) => {
+        const activeCell = await this._getActiveCell(context);
+        const textBoxContent = document.querySelector("textarea").value;
+        //changing value of active cell
+        activeCell.values = [[textBoxContent]];
+        await context.sync();
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
    * Deletes the text box content if it is different from the starting value of ""
    * and the active cell changes
    */
@@ -29,17 +46,5 @@ export class ExcelHelper {
     } catch (error) {
       console.error(error);
     }
-  }
-
-  /**
-   * Sets the value of the active cell to the value of the task pane text box
-   * @param context
-   */
-  async syncTextboxAndActiveCell(context: RequestContext): Promise<void> {
-    const activeCell = await this._getActiveCell(context);
-    const textBoxContent = document.querySelector("textarea").value;
-    //changing value of active cell
-    activeCell.values = [[textBoxContent]];
-    await context.sync();
   }
 }
