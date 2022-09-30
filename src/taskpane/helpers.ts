@@ -2,46 +2,49 @@ import RequestContext = Excel.RequestContext;
 
 /* global console, document, Excel */
 
-export class ExcelHelper {
+export class WorkSheetModifier {
   /**
-   * Returns the currently active cell
-   * @param context
+   * 1. checks if the info could be changed
+   * 2. change info
    */
-  _getActiveCell(context: RequestContext) {
+  public static getActiveCell(context: RequestContext): Excel.Range {
     return context.workbook.getActiveCell();
   }
 
-  /**
-   * Sets the value of the active cell to the value of the task pane text box
-   */
-  async run(): Promise<void> {
+  public static getCell(context: RequestContext, cssSelector: string): Element {
+    return document.querySelector(cssSelector);
+  }
+
+  public static getCellValue(selector): string {
+    return document.querySelector(selector).value;
+  }
+
+  public static changeCellValue(selectedCell: Excel.Range, textValue: string): void {
+    selectedCell.values = [[textValue]];
+  }
+
+  public static changeElementValue(cssSelector: string, value: string): void {
+    document.querySelector(cssSelector)["value"] = value;
+  }
+}
+
+export class ExcelHelper {
+  async changeCellText(cellCssSelector: string): Promise<void> {
     try {
       await Excel.run(async (context) => {
-        const activeCell = await this._getActiveCell(context);
-        const textBoxContent = document.querySelector("textarea").value;
-        //changing value of active cell
-        activeCell.values = [[textBoxContent]];
-        await context.sync();
+        const selectedCell = await WorkSheetModifier.getActiveCell(context);
+        const textBoxContent: string = WorkSheetModifier.getCellValue(cellCssSelector);
+        WorkSheetModifier.changeCellValue(selectedCell, textBoxContent);
       });
     } catch (error) {
       console.error(error);
     }
   }
 
-  /**
-   * Deletes the text box content if it is different from the starting value of ""
-   * and the active cell changes
-   */
-  async handleActiveCellChange(): Promise<void> {
+  async clearNonCellElementValue(): Promise<void> {
     try {
-      await Excel.run(async (context) => {
-        context.workbook.onSelectionChanged.add(function () {
-          document.querySelector("textarea").value = "";
-          // onSelectionChanged doesn't allow handlers that return void, so
-          // return null is needed
-          return null;
-        });
-        await context.sync();
+      await Excel.run(async () => {
+        WorkSheetModifier.changeElementValue("textarea", "")
       });
     } catch (error) {
       console.error(error);

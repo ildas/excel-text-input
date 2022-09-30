@@ -18,7 +18,7 @@ Start dev server by running `npm run dev-server`.
 Running locally with `npm start`.
 
 Please click on the `Show Taskpane` button in order to open the Excel add in.
-When you click on `Run`, the text box value will become the value of the active cell. 
+Entering text in the Taskpane text box will automatically update the active cell. 
 
 ## Further notes
 

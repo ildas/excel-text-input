@@ -5,7 +5,7 @@ let excelHelper = new ExcelHelper();
 /* global document, Office */
 Office.onReady((info) => {
   if (info.host === Office.HostType.Excel) {
-    document.getElementById("run").onclick = excelHelper.run.bind(excelHelper);
-    document.querySelector("textarea").onchange = excelHelper.handleActiveCellChange;
+    document.querySelector("textarea").oninput = excelHelper.changeCellText.bind(excelHelper, "textarea");
+    document.querySelector("textarea").onchange = excelHelper.clearNonCellElementValue;
   }
 });
