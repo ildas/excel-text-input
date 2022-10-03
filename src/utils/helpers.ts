@@ -1,7 +1,7 @@
+import { CellModifyingError, ClearNonCellElementValueError } from "../exceptions";
 import RequestContext = Excel.RequestContext;
 
 /* global console, document, Excel */
-
 export class WorkSheetModifier {
   /**
    * 1. checks if the info could be changed
@@ -28,8 +28,16 @@ export class WorkSheetModifier {
   }
 }
 
+/**
+ * base class and extend from it --
+ * novite imat
+ */
+
 export class ExcelHelper {
-  async changeCellText(cellCssSelector: string): Promise<void> {
+
+  // create a different error handler class with different exceptions
+
+  async changeCellValue(cellCssSelector: string): Promise<void> {
     try {
       await Excel.run(async (context) => {
         const selectedCell = await WorkSheetModifier.getActiveCell(context);
@@ -37,17 +45,18 @@ export class ExcelHelper {
         WorkSheetModifier.changeCellValue(selectedCell, textBoxContent);
       });
     } catch (error) {
-      console.error(error);
+      throw new CellModifyingError('failed to change cell value')
     }
   }
 
   async clearNonCellElementValue(): Promise<void> {
+    const cssSelector = "textarea";
     try {
       await Excel.run(async () => {
-        WorkSheetModifier.changeElementValue("textarea", "")
+        WorkSheetModifier.changeElementValue(cssSelector, "")
       });
     } catch (error) {
-      console.error(error);
+      throw new ClearNonCellElementValueError(`failed to clear value of selector: ${cssSelector}`)
     }
   }
 }
